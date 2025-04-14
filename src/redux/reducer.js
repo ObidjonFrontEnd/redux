@@ -1,29 +1,16 @@
-const nameState = { name: "" };
-const initialState = {
-  lightDark: false,
-};
+import { createSlice } from '@reduxjs/toolkit'
 
-export const nameReducer = (state = nameState, action) => {
-  switch (action.type) {
-    case "SET_NAME":
-      return { name: action.payload };
-    default:
-      return state;
-  }
-};
+const initialState = { name: '' }
 
+export const nameReducer = createSlice({
+	name: 'userName',
+	initialState,
+	reducers: {
+		SetName: (state, action) => {
+			state.name = action.payload
+		},
+	},
+})
 
-
-export const lightReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "TURN_ON":
-      return { lightDark: true };
-    case "TURN_OFF":
-      return { lightDark: false };
-    case "TOGGLE":
-      return { lightDark: !state.lightDark };
-    default:
-      return state;
-  }
-};
-
+export const { SetName } = nameReducer.actions
+export default nameReducer.reducer

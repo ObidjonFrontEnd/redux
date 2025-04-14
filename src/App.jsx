@@ -1,39 +1,56 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { useState } from 'react';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import Login from './pages/login'
+import SignUp from './pages/sigin'
+import Dashboard from './pages/Dashboard'
+import AuthLayout from './Layout/AuthLayout'
+import MainLayout from './Layout/MainLayout'
+import Users from './pages/users'
+import Comments from './pages/comments'
+import NotFoundPage from './pages/nonFoudent'
+import { useSelector } from 'react-redux'
 
-function App() {
-  const [input, setInput] = useState('');
-  const name = useSelector(state => state.name);
-  const dispatch = useDispatch();
-  const lightDark = useSelector(state => state.lightDark);
-
-
-  const handleClick = () => {
-    dispatch({ type: "SET_NAME", payload: input });
-  };
-
-  return (
-    <div>
-      <h2>ismingizni kiriting</h2>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Plase enter your name"
-      />
-      <button onClick={handleClick}>Save</button>
-
-      {name && <p>Hello, {name} 👋</p>}
-
-
-      <div>
-      <h2>Mode: {lightDark ? "light 🔆" : "dark 🌑"}</h2>
-      <button onClick={() => dispatch({ type: "TURN_ON" })}>on</button>
-      <button onClick={() => dispatch({ type: "TURN_OFF" })}>off</button>
-      <button onClick={() => dispatch({ type: "TOGGLE" })}>Toggle</button>
-    </div>
-    </div>
-  );
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = useSelector(state => state.user.isAuthenticated)
+	console.log(isAuthenticated);
+	
+  if (!isAuthenticated) {
+    return <Navigate to='/' /> 
+  }
+  return children
 }
 
-export default App;
+const ProtectedRouteNo = ({ children }) => {
+  const isAuthenticated = useSelector(state => state.user.isAuthenticated)
+  if (isAuthenticated) {
+    return <Navigate to='/dashboard' /> 
+  }
+  return children
+}
+
+function App() {
+  return (
+    <div>
+      <Router>
+        <Routes>
+
+          <Route element={<ProtectedRouteNo><AuthLayout /></ProtectedRouteNo>}>
+            <Route path='/' element={<Login />} />
+            <Route path='/signup' element={<SignUp />} />
+          </Route>
+
+  
+          <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/users' element={<Users />} />
+            <Route path='/comments' element={<Comments />} />
+          </Route>
+
+        
+          <Route path='*' element={<NotFoundPage />} />
+        </Routes>
+      </Router>
+    </div>
+  )
+}
+
+export default App

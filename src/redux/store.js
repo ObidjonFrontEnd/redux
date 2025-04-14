@@ -1,5 +1,8 @@
-import { createStore } from 'redux';
-import { lightReducer, nameReducer } from './reducer';
+import { configureStore } from '@reduxjs/toolkit'
+import  { userSlice } from '../redux/userSlice'
 
-export const store = createStore(nameReducer);
-export const light = createStore(lightReducer);
+export const store = configureStore({
+	reducer: {
+		user: userSlice.reducer,
+	},
+})
