@@ -1,2 +1,1 @@
-# redux
 # Redux-toolkit
